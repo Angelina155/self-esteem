@@ -26,9 +26,11 @@ const Diary = observer(() => {
         const data = await getItems(user.id)
         setNotes(data.rows)
         setIsFetching(false)
-
     }
 
+    const createNote = (newNote) => {
+        setNotes([...notes, newNote])
+    }
 
     return (
         <Container>
@@ -38,19 +40,14 @@ const Diary = observer(() => {
                         <Row className="d-flex justify-content-between p-2">
                             <h3>Все записи </h3>
                             <ButtonGroup style={{width: "50%"}}>
-                                <ItemForm/>
+                                <ItemForm create={createNote}/>
                                 <MarkForm/>
                             </ButtonGroup>
                         </Row>
                     </Card.Header>
                     {isFetching
                         ? <Spinner animation="border" role="status"/>
-                        : /*{notes.length ?
-                                (*/
-                                    <DiaryList/>/*notes={notes}*/
-                                /*) : (
-                                    <p>Нет записей</p>
-                                )}*/
+                        : <DiaryList notes={notes}/>
                     }
 
                 </Card>

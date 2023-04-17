@@ -1,0 +1,5 @@
+.form-control, .dropdown, .range-slider{
+    margin-top: 8px;
+    margin-bottom: 2px;
+    width: 100%;
+}
