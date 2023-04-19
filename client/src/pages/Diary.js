@@ -8,7 +8,7 @@ import { AppContext } from '../components/AppContext';
 import ItemForm from "./ItemForm";
 import MarkForm from "./MarkForm";
 import DiaryList from "./DiaryList";
-import {getCategories, getItems} from "../http/itemAPI";
+import {getCategories, getItems, deleteItem} from "../http/itemAPI";
 
 const Diary = observer(() => {
     const { item, user } = useContext(AppContext);
@@ -17,8 +17,8 @@ const Diary = observer(() => {
 
     useEffect(() => {
         fetchNotes()
-        getItems(user.id).then(data => item.setItems(data.rows)) /*в случае успешного выполнения запроса на получение - */
-        getCategories().then(data => item.setCategories(data))                   /*помещаем в контекст полученные данные*/
+        getCategories().then(data => item.setCategories(data))    /*в случае успешного выполнения запроса на получение - */
+                                                                    /*помещаем в контекст полученные данные*/
     }, [])
 
     async function fetchNotes() {
@@ -30,6 +30,10 @@ const Diary = observer(() => {
 
     const createNote = (newNote) => {
         setNotes([...notes, newNote])
+    }
+
+    const deleteNote = (note) => {
+        deleteItem(user.id, note.id).then(data => setNotes(notes.filter(n => n.id !== note.id)), () => alert("ошибка удаления. Обновите страницу и попбробуйте снова"))
     }
 
     return (
@@ -47,7 +51,7 @@ const Diary = observer(() => {
                     </Card.Header>
                     {isFetching
                         ? <Spinner animation="border" role="status"/>
-                        : <DiaryList notes={notes}/>
+                        : <DiaryList notes={notes} delete={deleteNote}/>
                     }
 
                 </Card>

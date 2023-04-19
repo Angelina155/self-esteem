@@ -18,6 +18,11 @@ export const getItems = async (userId) => {
     return data
 }
 
+export const deleteItem = async (userId, id) => {
+    const {data} = await authInstance.delete(`items/destroy/${id}`)
+    return data
+}
+
 export const getCategories = async () => {
     const {data} = await authInstance.get('categories/getAll')
     return data

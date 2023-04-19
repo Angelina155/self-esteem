@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import {Card, Col, Nav, Row} from "react-bootstrap";
+import {Button, Card, Col, Nav, Row} from "react-bootstrap";
 import Tab from 'react-bootstrap/Tab';
 import Tabs from "react-bootstrap/Tabs";
 import React, {useContext, useEffect, useState} from "react";
@@ -7,8 +7,10 @@ import React, {useContext, useEffect, useState} from "react";
 import {AppContext} from "../components/AppContext";
 import {getCategories, getItems} from "../http/itemAPI";
 
-const DiaryList = observer(({notes}) => {
+import NoteEditButtons from "./NoteEditButtons";
 
+const DiaryList = observer((props) => {
+    const notes = props.notes
     console.log(notes)
     const { item } = useContext(AppContext); /*изменить на категории*/
 
@@ -31,12 +33,13 @@ const DiaryList = observer(({notes}) => {
                                 {notes.map(note =>
                                     <Tab.Pane eventKey={note.id} key={note.id}>
 
-                                        <Tabs defaultActiveKey="a" id="uncontrolled-tab-example" className="mb-3">
+                                        <Tabs defaultActiveKey="a" className="mb-3">
                                             <Tab eventKey="a" title="A" style={{paddingLeft: 10}}>{note.a.length ?(note.a):(<p>Вы еще не заполнили это поле</p>)}</Tab>
                                             <Tab eventKey="b" title="B">{note.b.length ?(note.b):(<p>Вы еще не заполнили это поле</p>)}</Tab>
                                             <Tab eventKey="c" title="C">{note.c.length ?(note.c):(<p>Вы еще не заполнили это поле</p>)}</Tab>
                                             <Tab eventKey="b1" title="B1">{note.b1.length ?(note.b1):(<p>Вы еще не заполнили это поле</p>)}</Tab>
                                             <Tab eventKey="c1" title="C1">{note.c1.length ?(note.c1):(<p>Вы еще не заполнили это поле</p>)}</Tab>
+
                                         </Tabs>
                                         <Card className="text-center">
                                             <Card.Body>
@@ -48,6 +51,15 @@ const DiaryList = observer(({notes}) => {
                                                 <p>Дата создания: {note.createdAt.split("T")[0].split('-')[2]+"."+note.createdAt.split("T")[0].split('-')[1]+'.'+note.createdAt.split("T")[0].split('-')[0]}</p>
                                             </Card.Footer>
                                         </Card>
+
+                                        <div style={{justifyContent: "end", width: "100%"}}>
+                                            <Button>Изменить</Button>
+                                            <Button
+                                                onClick={() => props.delete(note)}
+                                                style={{backgroundColor: "red"}}>
+                                                Удалить
+                                            </Button>
+                                        </div>
                                     </Tab.Pane>
                                 )}
                             </Tab.Content>
