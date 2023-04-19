@@ -2,23 +2,20 @@ import { observer } from 'mobx-react-lite'
 import {Button, Dropdown, Form} from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import React, {useContext, useEffect, useState} from "react";
-
-import {AppContext} from "../components/AppContext";
-
-import {createItem, getCategories, getItems} from "../http/itemAPI";
-
 import RangeSlider from "react-bootstrap-range-slider";
-import '../styles/App.css'
-import ItemFormField from "./ItemFormField";
-import MarkSlider from "./MarkSlider";
 
+import {AppContext} from "../../components/AppContext";
+import {createItem} from "../../http/itemAPI";
+import '../../styles/App.css'
+import ItemFormField from "../../pages/ItemFormField";
+import MarkSlider from "../../pages/MarkSlider";
 
-
-const ItemForm = observer(({create}) => {
+const CreateNote = ({show, onHide, create}) => {
     const { item, user } = useContext(AppContext)
     const [note, setNote] = useState({title: '', a: '', b: '', c: '', b1: '', c1: '', state_before: 0, state_after: 0, categoryId: 0})
     const [catName, setCatName] = useState("Выберите категорию")
-    const [show, setShow] = useState(false), handleClose = () => setShow(false), handleShow = () => setShow(true);
+
+    /*const [show, setShow] = useState(false), handleClose = () => setShow(false), handleShow = () => setShow(true);*/
 
     const changeCategory = (selectedCategory) => {
 
@@ -28,11 +25,7 @@ const ItemForm = observer(({create}) => {
         console.log(selectedCategory.name, catName, note.categoryId)
         /*setCategory(category.name)*/
         item.setSelectedCategory(selectedCategory)
-
     }
-    /*const addStateBefore = (stateBefore) => setStateBefore(stateBefore);*/
-    /*const addStateAfter = (stateAfter) => setStateAfter(stateAfter);*/
-
 
     const addNewNote = (e) => {
         e.preventDefault()
@@ -53,7 +46,7 @@ const ItemForm = observer(({create}) => {
         formData.append('categoryId', item.selectedCategory.id)
         formData.append('userId', user.id)
 
-        createItem(formData).then(handleClose())
+        createItem(formData).then(onHide())
     }
 
     return (
@@ -63,23 +56,23 @@ const ItemForm = observer(({create}) => {
                 onClick={handleShow}>
                 Добавить новую запись
             </Button>*/}
-            <Modal show={show} onHide={handleClose} animation={false}>
+            <Modal show={show} onHide={onHide} animation={false}>
                 <Modal.Header closeButton>
                     <Modal.Title>Добавьте новую запись</Modal.Title>
                 </Modal.Header>
                 <Modal.Body style={{width: "100%"}}>
                     <Form className="d-flex flex-column" style={{width: "100%"}}>
-                        <ItemFormField value={title} func={(e) => setNote({...note, title: e.target.value})} placeholder="Введите заголовок"/>
-                        <ItemFormField value={a} func={(e) => setNote({...note, a: e.target.value})} placeholder="Что случилось?"/>
-                        <ItemFormField value={b} func={(e) => setNote({...note, b: e.target.value})} placeholder="Как Вы отреагировали?"/>
-                        <ItemFormField value={c} func={(e) => setNote({...note, c: e.target.value})} placeholder="Что привело именно к такой реакции?"/>
-                        <ItemFormField value={b1} func={(e) => setNote({...note, b1: e.target.value})} placeholder="Как бы Вы хотели отреагировать на ситуацию?"/>
-                        <ItemFormField value={c1} func={(e) => setNote({...note, c1: e.target.value})} placeholder="Что нужно сделать, чтобы получить желаемую реакцию?"/>
                         {/*<Form.Control
                             value={note.title}
                             onChange={e => setNote({...note, title: e.target.value})}
-                            placeholder={"Введите заголовок"}/>
-                        <Form.Control
+                            placeholder={"Введите заголовок"}/>*/}
+                        <ItemFormField value={note.title} func={(field) => setNote({...note, title: field})} placeholder="Введите заголовок"/>
+                        <ItemFormField value={note.a} func={(field) => setNote({...note, a: field})} placeholder="Что случилось?"/>
+                        <ItemFormField value={note.b} func={(field) => setNote({...note, b: field})} placeholder="Как Вы отреагировали?"/>
+                        <ItemFormField value={note.c} func={(field) => setNote({...note, c: field})} placeholder="Что привело именно к такой реакции?"/>
+                        <ItemFormField value={note.b1} func={(field) => setNote({...note, b1: field})} placeholder="Как бы Вы хотели отреагировать на ситуацию?"/>
+                        <ItemFormField value={note.c1} func={(field) => setNote({...note, c1: field})} placeholder="Что нужно сделать, чтобы получить желаемую реакцию?"/>
+                        {/*<Form.Control
                             value={note.a}
                             onChange={e => setNote({...note, a: e.target.value})}
                             placeholder={"Что случилось?"}/>
@@ -100,23 +93,23 @@ const ItemForm = observer(({create}) => {
                             onChange={e => setNote({...note, c1: e.target.value})}
                             placeholder={"Что нужно сделать, чтобы получить желаемую реакцию?"}/>*/}
 
-
                         {/**/}
                         <Dropdown>
                             <Dropdown.Toggle>{catName}</Dropdown.Toggle>
                             <Dropdown.Menu>
-                            {item.categories.map(category =>
-                                <Dropdown.Item
-                                    onClick={e => changeCategory(category)}
-                                    key={category.id}>
-                                    {category.name}
-                                </Dropdown.Item>
-                            )}
+                                {item.categories.map(category =>
+                                    <Dropdown.Item
+                                        onClick={e => changeCategory(category)}
+                                        key={category.id}>
+                                        {category.name}
+                                    </Dropdown.Item>
+                                )}
                             </Dropdown.Menu>
                         </Dropdown>
                         <div className="d-flex flex-row mt-3" style={{justifyContent: "space-around", width: "100%"}}>
                             <div style={{width: "45%"}}>
                                 <Form.Label style={{marginTop: "10px", textAlign: "center"}}>Уровень самооценки до события</Form.Label>
+                                <MarkSlider value={note.state_before} func={(field) => setNote({...note, state_before: field})}/>
                                 {/*<RangeSlider
                                     value={note.state_before}
                                     onChange={e => setNote({...note, state_before: Number(e.target.value)})}
@@ -125,7 +118,7 @@ const ItemForm = observer(({create}) => {
                             </div>
                             <div style={{width: "45%"}}>
                                 <Form.Label style={{marginTop: "10px", textAlign: "center"}}>Уровень самооценки после события</Form.Label>
-                                <MarkSlider value={stateAfter} func={(e) => setNote({...note, state_after: Number(e.target.value)})}/>
+                                <MarkSlider value={note.state_after} func={(field) => setNote({...note, state_after: field})}/>
                                 {/*<MarkSlider value={stateAfter} func={addStateAfter}/>*/}
                                 {/*<RangeSlider
                                     value={note.state_after}
@@ -137,13 +130,13 @@ const ItemForm = observer(({create}) => {
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={addNewNote}>Добавить</Button>
+                    <Button variant="primary" onClick={addNewNote}>Добавить</Button>
                     {/*<Button variant="primary" onClick={addItem}>Добавить</Button>*/}
-                    <Button variant="secondary" onClick={handleClose}>Закрыть</Button>
+                    <Button variant="secondary" onClick={onHide}>Закрыть</Button>
                 </Modal.Footer>
             </Modal>
         </div>
     );
-});
+};
 
-export default ItemForm
+export default CreateNote;

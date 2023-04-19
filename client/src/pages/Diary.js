@@ -1,19 +1,21 @@
-import {Row, Container, Spinner} from "react-bootstrap";
+import {Row, Container, Spinner, Button} from "react-bootstrap";
 import ButtonGroup from 'react-bootstrap/ButtonGroup'
 import Card from "react-bootstrap/Card";
 import { observer } from 'mobx-react-lite'
 import React, {useContext, useEffect, useState} from "react";
 
 import { AppContext } from '../components/AppContext';
-import ItemForm from "./ItemForm";
-import MarkForm from "./MarkForm";
 import DiaryList from "./DiaryList";
 import {getCategories, getItems, deleteItem} from "../http/itemAPI";
+import CreateNote from "../components/modals/CreateNote";
+import CreateMark from "../components/modals/CreateMark";
 
 const Diary = observer(() => {
     const { item, user } = useContext(AppContext);
     const [notes, setNotes] = useState([])
     const [isFetching, setIsFetching] = useState(false)
+    const [noteCreationVisible, setNoteCreationVisible] = useState(false)
+    const [markCreationVisible, setMarkCreationVisible] = useState(false)
 
     useEffect(() => {
         fetchNotes()
@@ -44,14 +46,26 @@ const Diary = observer(() => {
                         <Row className="d-flex justify-content-between p-2">
                             <h3>Все записи </h3>
                             <ButtonGroup style={{width: "50%"}}>
-                                <ItemForm create={createNote}/>
-                                <MarkForm/>
+                                <Button
+                                    variant="outline-primary"
+                                    onClick={() => setNoteCreationVisible(true)}>
+                                    Добавить новую запись
+                                </Button>
+                                <CreateNote show={noteCreationVisible} onHide={() => setNoteCreationVisible(false)} create={createNote}/>
+                                {/*<ItemForm create={createNote}/>*/}
+                                <Button
+                                    variant="outline-primary"
+                                    onClick={() => setMarkCreationVisible(true)}>
+                                    Определить уровень самооценки
+                                </Button>
+                                <CreateMark show={markCreationVisible} onHide={() => setMarkCreationVisible(false)}/>
+                                {/*<MarkForm/>*/}
                             </ButtonGroup>
                         </Row>
                     </Card.Header>
                     {isFetching
                         ? <Spinner animation="border" role="status"/>
-                        : <DiaryList notes={notes} delete={deleteNote}/>
+                        : <DiaryList notes={notes} deleteNote={deleteNote}/>
                     }
 
                 </Card>
