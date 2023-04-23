@@ -13,7 +13,7 @@ import DeleteConfirmation from "../components/modals/DeleteConfirmation";
 import "../styles/App.css"
 import DiaryItem from "./DiaryItem";
 
-const DiaryList = observer(({notes, deleteNote}) => {
+const DiaryList = observer(({notes, deleteNote, editNote}) => {
     console.log(notes)
     const { item } = useContext(AppContext); /*изменить на категории*/
 
@@ -35,7 +35,7 @@ const DiaryList = observer(({notes, deleteNote}) => {
                         <Col sm={9}>
                             <Tab.Content>
                                 {notes.map(note =>
-                                    <DiaryItem key={note.id} note={note} deleteNote={deleteNote}/>
+                                    <DiaryItem key={note.id} note={note} deleteNote={deleteNote} editNote={editNote}/>
                                 )}
                             </Tab.Content>
                         </Col>

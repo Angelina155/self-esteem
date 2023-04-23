@@ -10,10 +10,10 @@ import '../../styles/App.css'
 import ItemFormField from "../../pages/ItemFormField";
 import MarkSlider from "../../pages/MarkSlider";
 
-const CreateNote = ({show, onHide, create}) => {
+const CreateNote = ({show, onHide, func, initialNote, buttonName}) => {
     const { item, user } = useContext(AppContext)
-    const [note, setNote] = useState({title: '', a: '', b: '', c: '', b1: '', c1: '', state_before: 0, state_after: 0, categoryId: 0})
-    const [catName, setCatName] = useState("Выберите категорию")
+    const [note, setNote] = useState(initialNote/*{title: initialNote.title, a: initialNote.a, b: initialNote.b, c: initialNote.c, b1: initialNote.b1, c1: initialNote.c1, state_before: initialNote.state_before, state_after: initialNote.state_after, categoryId: initialNote.categoryId}*/)
+    const [catName, setCatName] = useState(initialNote.categoryName)
 
     /*const [show, setShow] = useState(false), handleClose = () => setShow(false), handleShow = () => setShow(true);*/
 
@@ -29,24 +29,12 @@ const CreateNote = ({show, onHide, create}) => {
 
     const addNewNote = (e) => {
         e.preventDefault()
-        const newNote = {
+        console.log(note.id)
+        /*const newNote = {
             ...note, id: Date.now(), createdAt: new Date().toLocaleString().replace(',', 'T').replaceAll('.', '-')
-        }
-        create(newNote)
-
-        const formData = new FormData()
-        formData.append('title', newNote.title)
-        formData.append('a', newNote.a)
-        formData.append('b', newNote.b)
-        formData.append('c', newNote.c)
-        formData.append('b1', newNote.b1)
-        formData.append('c1', newNote.c1)
-        formData.append('state_before', `${newNote.state_before}`)
-        formData.append('state_after', `${newNote.state_after}`)
-        formData.append('categoryId', item.selectedCategory.id)
-        formData.append('userId', user.id)
-
-        createItem(formData).then(onHide())
+        }*/
+        func(note)
+        onHide()
     }
 
     return (
@@ -130,7 +118,7 @@ const CreateNote = ({show, onHide, create}) => {
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="primary" onClick={addNewNote}>Добавить</Button>
+                    <Button variant="primary" onClick={addNewNote}>{buttonName}</Button>
                     {/*<Button variant="primary" onClick={addItem}>Добавить</Button>*/}
                     <Button variant="secondary" onClick={onHide}>Закрыть</Button>
                 </Modal.Footer>

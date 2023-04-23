@@ -6,12 +6,17 @@ import DeleteConfirmation from "../components/modals/DeleteConfirmation";
 import React, {useContext, useState} from "react";
 import {AppContext} from "../components/AppContext";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
+import CreateNote from "../components/modals/CreateNote";
+import {createItem} from "../http/itemAPI";
 
 
-const DiaryItem = observer(({note, deleteNote}) => {
-    const { item } = useContext(AppContext); /*изменить на категории*/
+const DiaryItem = observer(({note, deleteNote, editNote}) => {
+    const { item, user } = useContext(AppContext); /*изменить на категории*/
 
     const [deleteConfirmationVisible, setDeleteConfirmationVisible] = useState(false)
+    const [noteEditVisible, setNoteEditVisible] = useState(false)
+
+    const categoryName = item.categories.find(cat => cat.id === note.categoryId) ? item.categories.find(cat => cat.id === note.categoryId).name : "категория не определена"
 
     return (
         <Tab.Pane eventKey={note.id} key={note.id}>
@@ -26,7 +31,7 @@ const DiaryItem = observer(({note, deleteNote}) => {
             </Tabs>
             <Card className="text-center">
                 <Card.Body>
-                    <Card.Title>{item.categories.find(cat => cat.id === note.categoryId) ? item.categories.find(cat => cat.id === note.categoryId).name : "категория не определена"}</Card.Title>
+                    <Card.Title>{categoryName}</Card.Title>
                 </Card.Body>
                 <Card.Footer className="text-muted">
                     <p>Самооценка до события: {note.state_before}</p>
@@ -36,7 +41,13 @@ const DiaryItem = observer(({note, deleteNote}) => {
             </Card>
 
             <ButtonGroup style={{justifyContent: "end", width: "100%"}}>
-                <Button>Изменить</Button>
+                {/*<Button>Изменить</Button>*/}
+                <Button
+                    variant="outline-primary"
+                    onClick={() => setNoteEditVisible(true)}>
+                    Редактировать
+                </Button>
+                <CreateNote show={noteEditVisible} onHide={() => setNoteEditVisible(false)} func={editNote} initialNote={{id: note.id, title: note.title, a: note.a, b: note.b, c: note.c, b1: note.b1, c1: note.c1, state_before: note.state_before, state_after: note.state_after, categoryId: note.categoryId, categoryName: categoryName, createdAt: note.createdAt}} buttonName={"Изменить"}/>
                 {/*<Button
                                                 onClick={() => props.delete(note)}
                                                 style={{backgroundColor: "red"}}>
@@ -47,7 +58,7 @@ const DiaryItem = observer(({note, deleteNote}) => {
                     onClick={() => setDeleteConfirmationVisible(true)}>
                     Удалить
                 </Button>
-                <DeleteConfirmation show={deleteConfirmationVisible} onHide={() => setDeleteConfirmationVisible(false)} deleteNote={deleteNote} note={note}/>
+                <DeleteConfirmation show={deleteConfirmationVisible} onHide={() => setDeleteConfirmationVisible(false)} deleteNote={deleteNote} note={note} />
             </ButtonGroup>
         </Tab.Pane>
     );

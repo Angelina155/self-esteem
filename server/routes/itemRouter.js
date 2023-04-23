@@ -7,6 +7,7 @@ router.post('/create', itemController.create)
 router.get('/getAll', itemController.getAll)
 router.get('/getOne/:id', itemController.getOne)
 router.delete('/destroy/:id', itemController.destroy)
+router.patch('/update/:id', itemController.update)
 
 
 module.exports = router
