@@ -40,7 +40,7 @@ const DiaryList = observer(({notes, deleteNote, editNote}) => {
                             </Tab.Content>
                         </Col>
                     </Row>
-                ) : (<p>Нет записей</p>)
+                ) : (<h3 className="mt-3 p-4">Нет записей</h3>)
             }
         </Tab.Container>
     );

@@ -42,7 +42,7 @@ const customized_materials = sequelize.define('customized_materials',{
 
 const marks = sequelize.define('marks',{
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    mark: {type: DataTypes.INTEGER}
+    mark: {type: DataTypes.FLOAT}
 }, {underscored: true})
 
 

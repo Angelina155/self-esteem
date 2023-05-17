@@ -97,7 +97,7 @@ const CreateNote = ({show, onHide, func, initialNote, buttonName}) => {
                         <div className="d-flex flex-row mt-3" style={{justifyContent: "space-around", width: "100%"}}>
                             <div style={{width: "45%"}}>
                                 <Form.Label style={{marginTop: "10px", textAlign: "center"}}>Уровень самооценки до события</Form.Label>
-                                <MarkSlider value={note.state_before} func={(field) => setNote({...note, state_before: field})}/>
+                                <MarkSlider value={note.state_before} func={(field) => setNote({...note, state_before: field})} min={0} max={100}/>
                                 {/*<RangeSlider
                                     value={note.state_before}
                                     onChange={e => setNote({...note, state_before: Number(e.target.value)})}
@@ -106,7 +106,7 @@ const CreateNote = ({show, onHide, func, initialNote, buttonName}) => {
                             </div>
                             <div style={{width: "45%"}}>
                                 <Form.Label style={{marginTop: "10px", textAlign: "center"}}>Уровень самооценки после события</Form.Label>
-                                <MarkSlider value={note.state_after} func={(field) => setNote({...note, state_after: field})}/>
+                                <MarkSlider value={note.state_after} func={(field) => setNote({...note, state_after: field})} min={0} max={100} step={0.5}/>
                                 {/*<MarkSlider value={stateAfter} func={addStateAfter}/>*/}
                                 {/*<RangeSlider
                                     value={note.state_after}
