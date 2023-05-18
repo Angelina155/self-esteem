@@ -8,75 +8,42 @@ import {autosize} from "plotly.js/src/plots/layout_attributes";
 import { observer } from 'mobx-react-lite'
 import React, { useContext, useEffect, useState } from "react";
 import { AppContext } from '../components/AppContext';
-import {getMarks} from "../http/itemAPI";
+import {getCategories, getItems, getMarks} from "../http/itemAPI";
+import Stability from "./Stability";
+import LevelPlot from "./LevelPlot";
+import DiaryList from "./DiaryList";
 
 
 const Statistics = observer(() => {
     const { item, user } = useContext(AppContext);
-    useEffect(() => {
-        getMarks(user.id).then(data => item.setMarks(data.rows))
+    const [marks, setMarks] = useState([])
+    const [isFetching, setIsFetching] = useState(false)
 
+
+    useEffect(() => {
+        fetchMarks()
     }, [])
 
-    if(!item.marks.length) {
-        return <Spinner animation="border" variant="light" />
+    async function fetchMarks() {
+        setIsFetching(true)
+        const data = await getMarks(user.id)
+        setMarks(data.rows)
+        setIsFetching(false)
     }
-
-    const CalculateRMS = (arr) => Math.sqrt(
-        arr
-            .map( val => (val * val))
-            .reduce((acum, val) => acum + val)
-        /arr.length
-    )
-    const arr = []
-    console.log(item.marks.map(x => arr.push(x.mark)))
-    const rms = CalculateRMS(arr)
-    console.log(rms)
-    let stability
-    switch (true) {
-        case (rms > 8):
-            stability = "Очень низкий"
-            break;
-        case (rms > 6):
-            stability = "Низкий"
-            break;
-        case (rms > 3.5):
-            stability = "Средний"
-            break;
-        case (rms > 1.5):
-            stability = "Высокий"
-            break;
-        default:
-            stability = "Очень высокий"
-            break;
-    }
-
-
 
     return (
         <Container>
-            {item.marks.length ? (
-                <>
-                    <h3>Уровень стабильности самооценки: {stability}</h3>
-                    <Plot
-                        data={[
-                            {
-
-                                x: item.marks.map(p => p.createdAt),
-                                y: item.marks.map(p => p.mark),
-                                type: 'scatter',
-                                mode: 'line',
-                                marker: {color: 'coral'},
-                            },
-                        ]}
-                        layout={ {autosize, height: 600} }
-                    />
-                </>
-
-
-            ) : (
-                <p>Нет записей</p>
-            )}
+            {isFetching
+                ? <Spinner animation="border" role="status"/>
+                : marks.length > 1 ? (
+                        <div>
+                            <Stability marks={marks.map(p => p.mark)}/>
+                            <LevelPlot marks = {marks}/>
+                        </div>
+                    ) : (
+                        <h3>Для отслеживания прогресса необходимо пройти диагностику хотя бы два раза</h3>
+                    )
+            }
         </Container>
     );
 });
